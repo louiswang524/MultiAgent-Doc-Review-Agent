@@ -38,21 +38,23 @@ class LaunchDocReviewer:
         self,
         llm_provider: Optional[str] = None,
         llm_model: Optional[str] = None,
+        base_url: Optional[str] = None,
         google_credentials_path: Optional[str] = None
     ):
         """
         Initialize the launch document reviewer.
         
         Args:
-            llm_provider: LLM provider ('openai' or 'anthropic')
+            llm_provider: LLM provider ('openai', 'anthropic', 'ollama', 'local')
             llm_model: Specific model to use
+            base_url: Base URL for local LLM services
             google_credentials_path: Path to Google API credentials
         """
         self.logger = logging.getLogger(__name__)
         
         # Initialize LLM client
         try:
-            self.llm_client = LLMClientFactory.create_client(llm_provider, llm_model)
+            self.llm_client = LLMClientFactory.create_client(llm_provider, llm_model, base_url)
             self.logger.info(f"Initialized LLM client: {self.llm_client.get_provider_info()}")
         except Exception as e:
             self.logger.error(f"Failed to initialize LLM client: {e}")

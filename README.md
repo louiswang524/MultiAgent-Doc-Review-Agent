@@ -5,7 +5,8 @@ An LLM-powered multi-agent system for comprehensive review of product launch doc
 ## Features
 
 - **Multi-Agent Review**: Three specialized AI agents evaluate documents from different perspectives
-- **LLM-Powered Analysis**: Uses OpenAI GPT-4 or Anthropic Claude for intelligent document analysis  
+- **Multiple LLM Support**: Works with OpenAI GPT-4, Anthropic Claude, and local models (Ollama, vLLM, etc.)
+- **Local LLM Support**: Run completely offline with local models like Llama, Mistral, or CodeLlama
 - **Google Docs Integration**: Directly fetches and analyzes documents from Google Docs
 - **Flexible Requirements**: Customizable evaluation criteria through YAML configuration
 - **Detailed Scoring**: Provides scores (0-10) for each category and overall assessment
@@ -29,8 +30,11 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
-### 2. Setup API Keys
+### 2. Setup LLM Provider
 
+Choose one of the following options:
+
+#### Option A: Cloud LLMs (OpenAI/Anthropic)
 Create a `.env` file with your API keys:
 
 ```bash
@@ -39,10 +43,29 @@ OPENAI_API_KEY=your_openai_api_key_here
 # OR
 ANTHROPIC_API_KEY=your_anthropic_api_key_here
 
-# Set provider preference (optional)
 LLM_PROVIDER=openai  # or 'anthropic'
+```
 
-# Google API credentials
+#### Option B: Local LLMs (Recommended for Privacy)
+Use local models with Ollama (easiest setup):
+
+```bash
+# Install Ollama
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Pull a model
+ollama pull llama3.1:8b
+
+# Configure environment
+LLM_PROVIDER=ollama
+OLLAMA_MODEL=llama3.1:8b
+```
+
+See [examples/local_models/README.md](examples/local_models/README.md) for detailed local setup instructions.
+
+#### Google API Setup (Required for all options)
+```bash
+# Google API credentials (required for document fetching)
 GOOGLE_APPLICATION_CREDENTIALS=path/to/your/google_credentials.json
 ```
 
@@ -82,6 +105,7 @@ python -m src.main review --doc <google-docs-url> --requirements <requirements-f
 
 ### Advanced Options
 
+**Cloud LLM Example:**
 ```bash
 python -m src.main review \
   --doc "https://docs.google.com/document/d/abc123" \
@@ -90,6 +114,24 @@ python -m src.main review \
   --format json \
   --llm-provider anthropic \
   --llm-model claude-3-sonnet-20240229
+```
+
+**Local LLM Examples:**
+```bash
+# Using Ollama
+python -m src.main review \
+  --doc "https://docs.google.com/document/d/abc123" \
+  --requirements requirements.yaml \
+  --llm-provider ollama \
+  --llm-model llama3.1:8b
+
+# Using local OpenAI-compatible server (vLLM, etc.)
+python -m src.main review \
+  --doc "https://docs.google.com/document/d/abc123" \
+  --requirements requirements.yaml \
+  --llm-provider local \
+  --base-url http://localhost:8000 \
+  --llm-model meta-llama/Llama-3.1-8B-Instruct
 ```
 
 ### Check System Setup
@@ -219,6 +261,59 @@ Enable verbose logging for debugging:
 ```bash
 python -m src.main --verbose review --doc <url> --requirements <file>
 ```
+
+## Local LLM Setup
+
+### Why Use Local LLMs?
+
+- **Privacy**: Your documents never leave your machine
+- **Cost**: No API fees after initial setup
+- **Offline**: Works without internet connection
+- **Control**: Full control over model and inference parameters
+
+### Quick Setup with Ollama
+
+1. **Install Ollama:**
+   ```bash
+   curl -fsSL https://ollama.com/install.sh | sh  # Linux/macOS
+   # Or download from https://ollama.com for Windows
+   ```
+
+2. **Pull a model:**
+   ```bash
+   ollama pull llama3.1:8b  # ~4.7GB download
+   ```
+
+3. **Test the model:**
+   ```bash
+   ollama run llama3.1:8b
+   ```
+
+4. **Configure the reviewer:**
+   ```bash
+   echo "LLM_PROVIDER=ollama" >> .env
+   echo "OLLAMA_MODEL=llama3.1:8b" >> .env
+   ```
+
+5. **Run a review:**
+   ```bash
+   python -m src.main review \
+     --doc "your-google-docs-url" \
+     --requirements requirements.yaml \
+     --llm-provider ollama
+   ```
+
+### Model Recommendations
+
+| Model | Size | RAM Needed | Best For | Setup |
+|-------|------|------------|----------|-------|
+| `llama3.2:3b` | ~2GB | 4GB | Fast reviews, testing | `ollama pull llama3.2:3b` |
+| `llama3.1:8b` | ~4.7GB | 8GB | Balanced performance | `ollama pull llama3.1:8b` |
+| `mistral:7b` | ~4.1GB | 8GB | Good alternative to Llama | `ollama pull mistral:7b` |
+| `codellama:7b` | ~3.8GB | 8GB | Technical documents | `ollama pull codellama:7b` |
+| `llama3.1:70b` | ~40GB | 48GB+ | Highest quality | `ollama pull llama3.1:70b` |
+
+For detailed setup instructions with other local LLM providers (vLLM, text-generation-webui), see [examples/local_models/README.md](examples/local_models/README.md).
 
 ## Development
 

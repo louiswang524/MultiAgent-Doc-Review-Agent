@@ -49,11 +49,12 @@ def cli(verbose):
 @click.option('--doc', '-d', required=True, help='Google Docs URL to review')
 @click.option('--requirements', '-r', required=True, help='Path to requirements YAML file')
 @click.option('--output', '-o', help='Output file for JSON results')
-@click.option('--llm-provider', help='LLM provider (openai, anthropic)')
+@click.option('--llm-provider', help='LLM provider (openai, anthropic, ollama, local)')
 @click.option('--llm-model', help='Specific LLM model to use')
+@click.option('--base-url', help='Base URL for local LLM services (ollama/local)')
 @click.option('--google-credentials', help='Path to Google API credentials')
 @click.option('--format', 'output_format', type=click.Choice(['text', 'json']), default='text', help='Output format')
-def review(doc, requirements, output, llm_provider, llm_model, google_credentials, output_format):
+def review(doc, requirements, output, llm_provider, llm_model, base_url, google_credentials, output_format):
     """Review a launch document from Google Docs."""
     
     async def run_review():
@@ -63,13 +64,14 @@ def review(doc, requirements, output, llm_provider, llm_model, google_credential
                 console.print(f"[red]Error: Requirements file not found: {requirements}[/red]")
                 sys.exit(1)
             
-            # Check for required environment variables
+            # Check for available providers
             available_providers = LLMClientFactory.get_available_providers()
             if not available_providers:
-                console.print("[red]Error: No LLM providers configured. Please set API keys in environment.[/red]")
-                console.print("Required environment variables:")
-                console.print("  - OPENAI_API_KEY (for OpenAI)")
-                console.print("  - ANTHROPIC_API_KEY (for Anthropic)")
+                console.print("[red]Error: No LLM providers available. Please configure at least one.[/red]")
+                console.print("Configuration options:")
+                console.print("  - Set OPENAI_API_KEY for OpenAI")
+                console.print("  - Set ANTHROPIC_API_KEY for Anthropic") 
+                console.print("  - Install aiohttp for local models (ollama/local)")
                 sys.exit(1)
             
             # Show startup info
@@ -91,6 +93,7 @@ def review(doc, requirements, output, llm_provider, llm_model, google_credential
                     reviewer = LaunchDocReviewer(
                         llm_provider=llm_provider,
                         llm_model=llm_model,
+                        base_url=base_url,
                         google_credentials_path=google_credentials
                     )
                     progress.update(task, description="✅ Reviewer initialized")
@@ -210,9 +213,20 @@ def check_setup():
     
     if not available_providers:
         console.print("[yellow]⚠️ No LLM providers configured[/yellow]")
-        console.print("Set one of the following environment variables:")
-        console.print("  - OPENAI_API_KEY")
-        console.print("  - ANTHROPIC_API_KEY")
+        console.print("Configuration options:")
+        console.print("  - OPENAI_API_KEY (for OpenAI)")
+        console.print("  - ANTHROPIC_API_KEY (for Anthropic)")
+        console.print("  - aiohttp installed (for local models)")
+    else:
+        for provider in available_providers:
+            if provider in ['ollama', 'local']:
+                # Check if local services are reachable
+                base_url = os.getenv('OLLAMA_BASE_URL', 'http://localhost:11434') if provider == 'ollama' else os.getenv('LOCAL_BASE_URL', 'http://localhost:8000')
+                service_available = LLMClientFactory.check_local_service_availability(base_url)
+                status = "✅" if service_available else "⚠️"
+                console.print(f"{status} {provider.capitalize()} service: {base_url}")
+            else:
+                console.print(f"✅ {provider.capitalize()}: configured")
     
     # Check Google credentials
     google_creds = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
@@ -224,7 +238,7 @@ def check_setup():
     
     # Check dependencies
     try:
-        import openai, anthropic, googleapiclient
+        import openai, anthropic, googleapiclient, aiohttp
         console.print("[green]✅ All dependencies installed[/green]")
     except ImportError as e:
         console.print(f"[red]⚠️ Missing dependency: {e}[/red]")

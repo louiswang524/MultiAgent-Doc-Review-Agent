@@ -1,11 +1,12 @@
 """
 LLM client for interacting with various language model APIs.
-Supports OpenAI and Anthropic models with unified interface.
+Supports OpenAI, Anthropic, and local models via Ollama.
 """
 
 import os
 import json
 import logging
+import asyncio
 from typing import Optional, Dict, Any, List
 from enum import Enum
 
@@ -23,18 +24,27 @@ try:
 except ImportError:
     ANTHROPIC_AVAILABLE = False
 
+try:
+    import aiohttp
+    AIOHTTP_AVAILABLE = True
+except ImportError:
+    AIOHTTP_AVAILABLE = False
+
 
 class LLMProvider(Enum):
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
+    OLLAMA = "ollama"
+    LOCAL = "local"
 
 
 class LLMClient:
     """Unified client for interacting with different LLM providers."""
     
-    def __init__(self, provider: str = "openai", model: Optional[str] = None):
+    def __init__(self, provider: str = "openai", model: Optional[str] = None, base_url: Optional[str] = None):
         self.provider = LLMProvider(provider.lower())
         self.model = model or self._get_default_model()
+        self.base_url = base_url or self._get_default_base_url()
         self.client = None
         self.logger = logging.getLogger(__name__)
         
@@ -46,8 +56,21 @@ class LLMClient:
             return os.getenv("OPENAI_MODEL", "gpt-4-turbo-preview")
         elif self.provider == LLMProvider.ANTHROPIC:
             return os.getenv("ANTHROPIC_MODEL", "claude-3-sonnet-20240229")
+        elif self.provider == LLMProvider.OLLAMA:
+            return os.getenv("OLLAMA_MODEL", "llama3.1:8b")
+        elif self.provider == LLMProvider.LOCAL:
+            return os.getenv("LOCAL_MODEL", "llama3.1:8b")
         else:
             raise ValueError(f"Unsupported provider: {self.provider}")
+    
+    def _get_default_base_url(self) -> str:
+        """Get default base URL for the provider."""
+        if self.provider == LLMProvider.OLLAMA:
+            return os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+        elif self.provider == LLMProvider.LOCAL:
+            return os.getenv("LOCAL_BASE_URL", "http://localhost:8000")
+        else:
+            return ""
     
     def _initialize_client(self):
         """Initialize the appropriate client based on provider."""
@@ -71,6 +94,14 @@ class LLMClient:
             
             self.client = Anthropic(api_key=api_key)
         
+        elif self.provider in [LLMProvider.OLLAMA, LLMProvider.LOCAL]:
+            if not AIOHTTP_AVAILABLE:
+                raise ImportError("aiohttp library not installed. Run: pip install aiohttp")
+            
+            # For local models, we don't need to initialize a client here
+            # We'll use aiohttp directly in the API calls
+            self.client = None
+        
         else:
             raise ValueError(f"Unsupported provider: {self.provider}")
     
@@ -90,6 +121,14 @@ class LLMClient:
                 )
             elif self.provider == LLMProvider.ANTHROPIC:
                 return await self._call_anthropic(
+                    prompt, system_message, max_tokens, temperature
+                )
+            elif self.provider == LLMProvider.OLLAMA:
+                return await self._call_ollama(
+                    prompt, system_message, max_tokens, temperature
+                )
+            elif self.provider == LLMProvider.LOCAL:
+                return await self._call_local(
                     prompt, system_message, max_tokens, temperature
                 )
             else:
@@ -149,6 +188,88 @@ class LLMClient:
         
         return response.content[0].text
     
+    async def _call_ollama(
+        self,
+        prompt: str,
+        system_message: Optional[str],
+        max_tokens: int,
+        temperature: float
+    ) -> str:
+        """Call Ollama API."""
+        messages = []
+        
+        if system_message:
+            messages.append({"role": "system", "content": system_message})
+        
+        messages.append({"role": "user", "content": prompt})
+        
+        payload = {
+            "model": self.model,
+            "messages": messages,
+            "options": {
+                "num_predict": max_tokens,
+                "temperature": temperature
+            },
+            "stream": False
+        }
+        
+        async with aiohttp.ClientSession() as session:
+            try:
+                async with session.post(
+                    f"{self.base_url}/api/chat",
+                    json=payload,
+                    timeout=aiohttp.ClientTimeout(total=300)  # 5 minute timeout
+                ) as response:
+                    if response.status != 200:
+                        error_text = await response.text()
+                        raise RuntimeError(f"Ollama API error {response.status}: {error_text}")
+                    
+                    result = await response.json()
+                    return result.get("message", {}).get("content", "")
+                    
+            except aiohttp.ClientError as e:
+                raise RuntimeError(f"Failed to connect to Ollama at {self.base_url}: {e}")
+    
+    async def _call_local(
+        self,
+        prompt: str,
+        system_message: Optional[str],
+        max_tokens: int,
+        temperature: float
+    ) -> str:
+        """Call local LLM API (OpenAI-compatible)."""
+        messages = []
+        
+        if system_message:
+            messages.append({"role": "system", "content": system_message})
+        
+        messages.append({"role": "user", "content": prompt})
+        
+        payload = {
+            "model": self.model,
+            "messages": messages,
+            "max_tokens": max_tokens,
+            "temperature": temperature,
+            "stream": False
+        }
+        
+        async with aiohttp.ClientSession() as session:
+            try:
+                async with session.post(
+                    f"{self.base_url}/v1/chat/completions",
+                    json=payload,
+                    timeout=aiohttp.ClientTimeout(total=300)  # 5 minute timeout
+                ) as response:
+                    if response.status != 200:
+                        error_text = await response.text()
+                        raise RuntimeError(f"Local LLM API error {response.status}: {error_text}")
+                    
+                    result = await response.json()
+                    return result.get("choices", [{}])[0].get("message", {}).get("content", "")
+                    
+            except aiohttp.ClientError as e:
+                raise RuntimeError(f"Failed to connect to local LLM at {self.base_url}: {e}")
+    
     def parse_json_response(self, response: str) -> Dict[str, Any]:
         """Parse JSON response from LLM."""
         try:
@@ -168,23 +289,28 @@ class LLMClient:
     
     def get_provider_info(self) -> Dict[str, str]:
         """Get information about the current provider and model."""
-        return {
+        info = {
             "provider": self.provider.value,
             "model": self.model,
             "available": True
         }
+        
+        if self.provider in [LLMProvider.OLLAMA, LLMProvider.LOCAL]:
+            info["base_url"] = self.base_url
+            
+        return info
 
 
 class LLMClientFactory:
     """Factory for creating LLM clients."""
     
     @staticmethod
-    def create_client(provider: Optional[str] = None, model: Optional[str] = None) -> LLMClient:
+    def create_client(provider: Optional[str] = None, model: Optional[str] = None, base_url: Optional[str] = None) -> LLMClient:
         """Create LLM client based on environment or parameters."""
         if provider is None:
             provider = os.getenv("LLM_PROVIDER", "openai")
         
-        return LLMClient(provider=provider, model=model)
+        return LLMClient(provider=provider, model=model, base_url=base_url)
     
     @staticmethod
     def get_available_providers() -> List[str]:
@@ -197,4 +323,38 @@ class LLMClientFactory:
         if ANTHROPIC_AVAILABLE and os.getenv("ANTHROPIC_API_KEY"):
             providers.append("anthropic")
         
+        if AIOHTTP_AVAILABLE:
+            providers.append("ollama")
+            providers.append("local")
+        
         return providers
+    
+    @staticmethod
+    def check_local_service_availability(base_url: str, timeout: float = 5.0) -> bool:
+        """Check if a local LLM service is available."""
+        import asyncio
+        
+        async def check_service():
+            try:
+                async with aiohttp.ClientSession() as session:
+                    # Try Ollama endpoint first
+                    try:
+                        async with session.get(
+                            f"{base_url}/api/tags",
+                            timeout=aiohttp.ClientTimeout(total=timeout)
+                        ) as response:
+                            return response.status == 200
+                    except:
+                        # Try OpenAI-compatible endpoint
+                        async with session.get(
+                            f"{base_url}/v1/models",
+                            timeout=aiohttp.ClientTimeout(total=timeout)
+                        ) as response:
+                            return response.status == 200
+            except:
+                return False
+        
+        try:
+            return asyncio.run(check_service())
+        except:
+            return False

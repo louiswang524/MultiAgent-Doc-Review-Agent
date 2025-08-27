@@ -1,0 +1,200 @@
+metadata:
+  version: "1.0"
+  description: "Financial technology product requirements with compliance focus"
+  document_type: "FinTech Product"
+  template_name: "FinTech Product Launch"
+  difficulty: "advanced"
+  industry: "financial_services"
+  last_updated: "2024-01-01"
+
+agents:
+  - type: "product_manager"
+    name: "Product Manager Agent"
+    description: "Evaluates business strategy with financial services focus"
+    requirements:
+      - category: "Regulatory Compliance"
+        description: "Financial regulations and compliance requirements"
+        weight: 30
+        criteria:
+          - name: "Regulatory framework identified"
+            description: "Relevant financial regulations (PCI-DSS, SOX, etc.)"
+            weight: 1.0
+          - name: "Compliance plan outlined"
+            description: "Steps to ensure regulatory compliance"
+            weight: 1.0
+          - name: "Audit trail requirements"
+            description: "Data retention and audit requirements"
+            weight: 1.0
+      
+      - category: "Financial Product Strategy"
+        description: "Product positioning in financial markets"
+        weight: 25
+        criteria:
+          - name: "Market segment defined"
+            description: "Target customer segment (retail, enterprise, SMB)"
+            weight: 1.0
+          - name: "Revenue model specified"
+            description: "How the product generates revenue"
+            weight: 1.0
+          - name: "Competitive analysis"
+            description: "Analysis of existing financial solutions"
+            weight: 1.0
+      
+      - category: "Risk Management"
+        description: "Financial and operational risk considerations"
+        weight: 25
+        criteria:
+          - name: "Financial risk assessment"
+            description: "Credit, market, and operational risks"
+            weight: 1.0
+          - name: "Fraud prevention strategy"
+            description: "Anti-fraud measures and monitoring"
+            weight: 1.0
+      
+      - category: "User Experience"
+        description: "Customer experience in financial context"
+        weight: 20
+        criteria:
+          - name: "Trust and security UX"
+            description: "How security is communicated to users"
+            weight: 1.0
+          - name: "Financial literacy support"
+            description: "Help for users understanding financial concepts"
+            weight: 1.0
+
+  - type: "data_scientist"
+    name: "Data Scientist Agent"
+    description: "Evaluates data handling with financial compliance focus"
+    requirements:
+      - category: "Data Privacy & Security"
+        description: "Handling of sensitive financial data"
+        weight: 35
+        criteria:
+          - name: "PII protection strategy"
+            description: "How personally identifiable information is protected"
+            weight: 1.0
+          - name: "Data encryption standards"
+            description: "Encryption at rest and in transit"
+            weight: 1.0
+          - name: "Data retention policy"
+            description: "How long data is kept and deletion procedures"
+            weight: 1.0
+      
+      - category: "Financial Analytics"
+        description: "Analytics specific to financial products"
+        weight: 30
+        criteria:
+          - name: "Transaction monitoring"
+            description: "Real-time transaction analysis capabilities"
+            weight: 1.0
+          - name: "Risk scoring models"
+            description: "Algorithms for assessing financial risk"
+            weight: 1.0
+          - name: "Regulatory reporting"
+            description: "Automated compliance reporting capabilities"
+            weight: 1.0
+      
+      - category: "Fraud Detection"
+        description: "Machine learning for fraud prevention"
+        weight: 25
+        criteria:
+          - name: "Anomaly detection models"
+            description: "ML models for detecting unusual patterns"
+            weight: 1.0
+          - name: "Real-time scoring"
+            description: "Ability to score transactions in real-time"
+            weight: 1.0
+      
+      - category: "Performance Metrics"
+        description: "Key financial product metrics"
+        weight: 10
+        criteria:
+          - name: "Financial KPIs defined"
+            description: "Revenue, conversion, retention metrics"
+            weight: 1.0
+          - name: "Risk metrics tracked"
+            description: "Default rates, fraud rates, etc."
+            weight: 1.0
+
+  - type: "engineering"
+    name: "Engineering Agent"
+    description: "Evaluates technical implementation for financial systems"
+    requirements:
+      - category: "Security Architecture"
+        description: "Robust security for financial data"
+        weight: 30
+        criteria:
+          - name: "Authentication system"
+            description: "Multi-factor authentication and identity verification"
+            weight: 1.0
+          - name: "Authorization framework"
+            description: "Role-based access control for financial operations"
+            weight: 1.0
+          - name: "Security monitoring"
+            description: "Real-time security event monitoring"
+            weight: 1.0
+          - name: "Penetration testing plan"
+            description: "Regular security testing procedures"
+            weight: 1.0
+      
+      - category: "Data Infrastructure"
+        description: "Secure and compliant data handling"
+        weight: 25
+        criteria:
+          - name: "Database security"
+            description: "Encrypted databases with access controls"
+            weight: 1.0
+          - name: "Backup and recovery"
+            description: "Disaster recovery for financial data"
+            weight: 1.0
+          - name: "Data lineage tracking"
+            description: "Audit trail for data processing"
+            weight: 1.0
+      
+      - category: "Performance & Reliability"
+        description: "High availability for financial services"
+        weight: 20
+        criteria:
+          - name: "High availability design"
+            description: "99.9%+ uptime architecture"
+            weight: 1.0
+          - name: "Transaction processing speed"
+            description: "Sub-second transaction processing"
+            weight: 1.0
+          - name: "Scalability planning"
+            description: "Ability to handle transaction volume growth"
+            weight: 1.0
+      
+      - category: "Integration & APIs"
+        description: "Financial system integrations"
+        weight: 15
+        criteria:
+          - name: "Banking API integration"
+            description: "Connection to banking and payment systems"
+            weight: 1.0
+          - name: "Third-party financial services"
+            description: "Integration with credit bureaus, KYC services"
+            weight: 1.0
+      
+      - category: "Deployment & Operations"
+        description: "Production deployment for financial systems"
+        weight: 10
+        criteria:
+          - name: "Compliance deployment"
+            description: "Deployment process meeting regulatory standards"
+            weight: 1.0
+          - name: "Incident response plan"
+            description: "Procedures for handling security incidents"
+            weight: 1.0
+
+scoring:
+  scale: "0-10"
+  weights:
+    product_manager: 0.3
+    data_scientist: 0.3
+    engineering: 0.4
+  thresholds:
+    excellent: 8.5
+    good: 7.0
+    acceptable: 6.0
+    needs_improvement: 4.0

@@ -1,0 +1,215 @@
+metadata:
+  version: "1.0"
+  description: "SaaS platform requirements focused on scalability and user adoption"
+  document_type: "SaaS Platform"
+  template_name: "SaaS Platform Launch"
+  difficulty: "intermediate"
+  industry: "software"
+  last_updated: "2024-01-01"
+
+agents:
+  - type: "product_manager"
+    name: "Product Manager Agent"
+    description: "Evaluates SaaS product strategy and market fit"
+    requirements:
+      - category: "Market Positioning"
+        description: "SaaS market strategy and competitive positioning"
+        weight: 30
+        criteria:
+          - name: "Target customer segments"
+            description: "SMB, Mid-market, or Enterprise focus"
+            weight: 1.0
+          - name: "Pricing strategy defined"
+            description: "Freemium, tiered, usage-based, or flat-rate pricing"
+            weight: 1.0
+          - name: "Competitive differentiation"
+            description: "How the platform differs from existing solutions"
+            weight: 1.0
+          - name: "Go-to-market strategy"
+            description: "Customer acquisition and channel strategy"
+            weight: 1.0
+      
+      - category: "Product Strategy"
+        description: "Core platform capabilities and roadmap"
+        weight: 35
+        criteria:
+          - name: "Core value proposition"
+            description: "Primary problem the platform solves"
+            weight: 1.0
+          - name: "Feature prioritization"
+            description: "MVP features vs future roadmap items"
+            weight: 1.0
+          - name: "Platform extensibility"
+            description: "API strategy and third-party integrations"
+            weight: 1.0
+      
+      - category: "User Experience Strategy"
+        description: "Onboarding and user adoption approach"
+        weight: 25
+        criteria:
+          - name: "Onboarding experience"
+            description: "How new users get started and find value quickly"
+            weight: 1.0
+          - name: "User activation metrics"
+            description: "What actions indicate successful user adoption"
+            weight: 1.0
+          - name: "Customer success strategy"
+            description: "How to ensure ongoing customer success and retention"
+            weight: 1.0
+      
+      - category: "Business Model"
+        description: "Revenue and growth strategy"
+        weight: 10
+        criteria:
+          - name: "Revenue projections"
+            description: "Expected revenue growth and key drivers"
+            weight: 1.0
+          - name: "Unit economics"
+            description: "Customer acquisition cost vs lifetime value"
+            weight: 1.0
+
+  - type: "data_scientist"
+    name: "Data Scientist Agent"
+    description: "Evaluates analytics and data-driven growth strategies"
+    requirements:
+      - category: "Product Analytics"
+        description: "Understanding user behavior and platform usage"
+        weight: 35
+        criteria:
+          - name: "User behavior tracking"
+            description: "Key user actions and engagement metrics"
+            weight: 1.0
+          - name: "Feature usage analytics"
+            description: "Which features drive value and retention"
+            weight: 1.0
+          - name: "Conversion funnel analysis"
+            description: "From trial to paid customer conversion tracking"
+            weight: 1.0
+      
+      - category: "Growth Analytics"
+        description: "Data-driven growth and optimization"
+        weight: 30
+        criteria:
+          - name: "Growth metrics framework"
+            description: "MRR, ARR, churn, expansion revenue tracking"
+            weight: 1.0
+          - name: "Cohort analysis plan"
+            description: "User retention and behavior over time"
+            weight: 1.0
+          - name: "A/B testing strategy"
+            description: "Experimentation framework for optimization"
+            weight: 1.0
+      
+      - category: "Customer Intelligence"
+        description: "Understanding customer segments and needs"
+        weight: 25
+        criteria:
+          - name: "Customer segmentation"
+            description: "Data-driven customer persona development"
+            weight: 1.0
+          - name: "Churn prediction models"
+            description: "Early warning systems for customer churn"
+            weight: 1.0
+          - name: "Usage pattern analysis"
+            description: "Identifying successful vs struggling customers"
+            weight: 1.0
+      
+      - category: "Business Intelligence"
+        description: "Operational and financial analytics"
+        weight: 10
+        criteria:
+          - name: "Revenue attribution"
+            description: "Connecting product usage to revenue outcomes"
+            weight: 1.0
+          - name: "Operational dashboards"
+            description: "Real-time business health monitoring"
+            weight: 1.0
+
+  - type: "engineering"
+    name: "Engineering Agent"
+    description: "Evaluates technical architecture for SaaS scalability"
+    requirements:
+      - category: "Scalability Architecture"
+        description: "Technical foundation for growth"
+        weight: 30
+        criteria:
+          - name: "Multi-tenant architecture"
+            description: "Efficient resource sharing across customers"
+            weight: 1.0
+          - name: "Auto-scaling capabilities"
+            description: "Automatic resource scaling based on demand"
+            weight: 1.0
+          - name: "Database scaling strategy"
+            description: "Handling growing data volumes efficiently"
+            weight: 1.0
+          - name: "CDN and caching strategy"
+            description: "Global performance optimization"
+            weight: 1.0
+      
+      - category: "API & Integration"
+        description: "Platform extensibility and ecosystem"
+        weight: 25
+        criteria:
+          - name: "RESTful API design"
+            description: "Well-designed APIs for third-party integrations"
+            weight: 1.0
+          - name: "Webhook system"
+            description: "Real-time event notifications for integrations"
+            weight: 1.0
+          - name: "SDK and documentation"
+            description: "Developer tools and comprehensive documentation"
+            weight: 1.0
+      
+      - category: "Security & Compliance"
+        description: "Enterprise-grade security requirements"
+        weight: 20
+        criteria:
+          - name: "Data encryption standards"
+            description: "Encryption at rest and in transit"
+            weight: 1.0
+          - name: "Access control system"
+            description: "Role-based permissions and SSO support"
+            weight: 1.0
+          - name: "Compliance frameworks"
+            description: "SOC 2, GDPR, or industry-specific compliance"
+            weight: 1.0
+      
+      - category: "Reliability & Performance"
+        description: "Production-ready operational excellence"
+        weight: 15
+        criteria:
+          - name: "High availability design"
+            description: "99.9%+ uptime with redundancy and failover"
+            weight: 1.0
+          - name: "Performance monitoring"
+            description: "Real-time performance and error tracking"
+            weight: 1.0
+          - name: "Backup and disaster recovery"
+            description: "Data protection and business continuity"
+            weight: 1.0
+      
+      - category: "Development & Deployment"
+        description: "Efficient development and release processes"
+        weight: 10
+        criteria:
+          - name: "CI/CD pipeline"
+            description: "Automated testing and deployment"
+            weight: 1.0
+          - name: "Feature flag system"
+            description: "Safe feature rollouts and A/B testing support"
+            weight: 1.0
+          - name: "Environment management"
+            description: "Dev, staging, and production environment strategy"
+            weight: 1.0
+
+scoring:
+  scale: "0-10"
+  weights:
+    product_manager: 0.4
+    data_scientist: 0.3
+    engineering: 0.3
+  thresholds:
+    excellent: 8.0
+    good: 6.5
+    acceptable: 5.0
+    needs_improvement: 3.5

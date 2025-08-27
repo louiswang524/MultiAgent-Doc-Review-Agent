@@ -21,6 +21,8 @@ from dotenv import load_dotenv
 from .launch_doc_reviewer import LaunchDocReviewer
 from .requirements_manager import RequirementsManager
 from .utils.llm_client import LLMClientFactory
+from .requirements_wizard import run_requirements_wizard
+from .template_manager import get_template_manager
 
 # Load environment variables
 load_dotenv()
@@ -190,6 +192,140 @@ def init_requirements(file):
         
     except Exception as e:
         console.print(f"[red]Error creating requirements file: {e}[/red]")
+        sys.exit(1)
+
+
+@cli.command()
+def setup_requirements():
+    """Interactive wizard to create customized requirements."""
+    try:
+        output_file = run_requirements_wizard()
+        console.print(f"\n[green]🎉 Success! Your custom requirements have been saved.[/green]")
+        console.print(f"File: {output_file}")
+        console.print("\n[bold]Next steps:[/bold]")
+        console.print("1. Review and adjust the generated requirements if needed")
+        console.print("2. Set up your LLM provider (API keys or local models)")
+        console.print("3. Configure Google API credentials")
+        console.print(f"4. Run: python -m src.main review --doc <url> --requirements {output_file}")
+        
+    except KeyboardInterrupt:
+        console.print("\n[yellow]Setup cancelled by user[/yellow]")
+    except Exception as e:
+        console.print(f"[red]Error during requirements setup: {e}[/red]")
+        sys.exit(1)
+
+
+@cli.command()
+@click.option('--type', 'doc_type', help='Filter templates by document type')
+@click.option('--difficulty', help='Filter templates by difficulty (beginner/intermediate/advanced)')
+@click.option('--industry', help='Filter templates by industry (healthcare, financial_services, etc.)')
+def list_templates(doc_type, difficulty, industry):
+    """List available requirements templates."""
+    try:
+        template_manager = get_template_manager()
+        
+        if doc_type or difficulty or industry:
+            templates = template_manager.get_recommendations(doc_type, difficulty, industry)
+            filter_info = f"type: {doc_type or 'any'}, difficulty: {difficulty or 'any'}, industry: {industry or 'any'}"
+            console.print(f"[bold]Filtered Templates[/bold] ({filter_info})")
+        else:
+            templates = template_manager.list_templates()
+        
+        if not templates:
+            console.print("[yellow]No templates found matching your criteria.[/yellow]")
+            return
+            
+        template_manager.display_templates()
+        
+        console.print(f"\n[dim]Found {len(templates)} template(s). Use 'use-template' command to apply one.[/dim]")
+        
+    except Exception as e:
+        console.print(f"[red]Error listing templates: {e}[/red]")
+        sys.exit(1)
+
+
+@cli.command()
+@click.argument('template_id', type=int)
+@click.option('--file', '-f', default='requirements.yaml', help='Output requirements file path')
+@click.option('--preview', is_flag=True, help='Preview template without saving')
+def use_template(template_id, file, preview):
+    """Use a predefined requirements template."""
+    try:
+        template_manager = get_template_manager()
+        template = template_manager.get_template_by_id(template_id)
+        
+        if not template:
+            console.print(f"[red]Template {template_id} not found. Use 'list-templates' to see available options.[/red]")
+            sys.exit(1)
+        
+        if preview:
+            template_manager.preview_template(template)
+            return
+        
+        # Load and save template
+        requirements = template_manager.load_template_requirements(template)
+        
+        # Update metadata
+        requirements['metadata']['last_updated'] = 'auto-generated'
+        requirements['metadata']['created_from_template'] = template.name
+        
+        with open(file, 'w', encoding='utf-8') as f:
+            yaml.dump(requirements, f, default_flow_style=False, sort_keys=False, indent=2)
+        
+        console.print(Panel.fit(f"📋 Template Applied: {template.name}", style="green bold"))
+        console.print(f"Requirements saved to: {file}")
+        console.print(f"Template type: {template.document_type}")
+        console.print(f"Difficulty: {template.difficulty}")
+        console.print(f"\n[bold]Next steps:[/bold]")
+        console.print("1. Review and customize the requirements if needed")
+        console.print("2. Set up your LLM provider")
+        console.print("3. Run your first review!")
+        
+    except Exception as e:
+        console.print(f"[red]Error applying template: {e}[/red]")
+        sys.exit(1)
+
+
+@cli.command()
+@click.argument('requirements_file', type=click.Path(exists=True))
+def validate_requirements(requirements_file):
+    """Validate a requirements YAML file for errors and best practices."""
+    try:
+        template_manager = get_template_manager()
+        issues = template_manager.validate_requirements_file(requirements_file)
+        template_manager.display_validation_results(requirements_file, issues)
+        
+        # Exit with error code if there are errors
+        if issues['errors']:
+            sys.exit(1)
+        
+    except Exception as e:
+        console.print(f"[red]Error validating requirements file: {e}[/red]")
+        sys.exit(1)
+
+
+@cli.command()
+def list_industries():
+    """List available industry-specific templates."""
+    try:
+        template_manager = get_template_manager()
+        industries = template_manager.get_industries()
+        
+        if not industries:
+            console.print("[yellow]No industry-specific templates available.[/yellow]")
+            return
+        
+        console.print(Panel.fit("🏭 Available Industries", style="blue bold"))
+        console.print("Use these industry names with --industry flag:")
+        
+        for industry in industries:
+            industry_key = industry.lower().replace(' ', '_')
+            console.print(f"  • {industry} (--industry {industry_key})")
+        
+        console.print(f"\n[dim]Found {len(industries)} industry-specific template(s).[/dim]")
+        
+    except Exception as e:
+        console.print(f"[red]Error listing industries: {e}[/red]")
         sys.exit(1)
 
 

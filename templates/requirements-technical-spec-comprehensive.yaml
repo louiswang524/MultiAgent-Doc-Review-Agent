@@ -1,0 +1,171 @@
+metadata:
+  version: "1.0"
+  description: "Comprehensive technical specification requirements for complex projects"
+  document_type: "Technical Specification"
+  template_name: "Comprehensive Technical Spec"
+  difficulty: "advanced"
+  last_updated: "2024-01-01"
+
+agents:
+  - type: "product_manager"
+    name: "Product Manager Agent"
+    description: "Evaluates business alignment and stakeholder needs"
+    requirements:
+      - category: "Business Requirements"
+        description: "How technical solution addresses business needs"
+        weight: 50
+        criteria:
+          - name: "Business objectives mapped"
+            description: "Clear connection between technical solution and business goals"
+            weight: 1.0
+          - name: "User requirements traced"
+            description: "Technical features tied to user needs"
+            weight: 1.0
+          - name: "Success criteria defined"
+            description: "Business metrics for evaluating technical success"
+            weight: 1.0
+      
+      - category: "Stakeholder Impact"
+        description: "Effect on different user groups and teams"
+        weight: 30
+        criteria:
+          - name: "User impact analyzed"
+            description: "How technical changes affect end users"
+            weight: 1.0
+          - name: "Team dependencies"
+            description: "Impact on other development teams"
+            weight: 1.0
+      
+      - category: "Project Scope"
+        description: "Boundaries and constraints"
+        weight: 20
+        criteria:
+          - name: "Scope boundaries clear"
+            description: "What is and isn't included in this technical solution"
+            weight: 1.0
+          - name: "Constraints documented"
+            description: "Technical, time, and resource limitations"
+            weight: 1.0
+
+  - type: "data_scientist"
+    name: "Data Scientist Agent"
+    description: "Evaluates data architecture and analytics implications"
+    requirements:
+      - category: "Data Architecture"
+        description: "Data flow and storage design"
+        weight: 40
+        criteria:
+          - name: "Data models defined"
+            description: "Clear specification of data structures"
+            weight: 1.0
+          - name: "Data flow documented"
+            description: "How data moves through the system"
+            weight: 1.0
+          - name: "Storage strategy specified"
+            description: "Database and storage architecture decisions"
+            weight: 1.0
+      
+      - category: "Analytics Requirements"
+        description: "Measurement and monitoring needs"
+        weight: 30
+        criteria:
+          - name: "Monitoring requirements"
+            description: "What needs to be tracked and measured"
+            weight: 1.0
+          - name: "Reporting specifications"
+            description: "Dashboard and reporting needs"
+            weight: 1.0
+      
+      - category: "Data Quality"
+        description: "Data validation and quality assurance"
+        weight: 30
+        criteria:
+          - name: "Data validation rules"
+            description: "How data quality will be ensured"
+            weight: 1.0
+          - name: "Error handling strategy"
+            description: "Approach for handling data errors"
+            weight: 1.0
+
+  - type: "engineering"
+    name: "Engineering Agent"
+    description: "Evaluates technical architecture and implementation details"
+    requirements:
+      - category: "System Architecture"
+        description: "Overall system design and component interactions"
+        weight: 30
+        criteria:
+          - name: "Architecture diagrams provided"
+            description: "Visual representation of system components"
+            weight: 1.0
+          - name: "Component interfaces defined"
+            description: "How different parts of the system interact"
+            weight: 1.0
+          - name: "Technology stack justified"
+            description: "Rationale for technology choices"
+            weight: 1.0
+          - name: "Scalability architecture"
+            description: "How the system will handle increased load"
+            weight: 1.0
+      
+      - category: "Technical Specifications"
+        description: "Detailed implementation requirements"
+        weight: 25
+        criteria:
+          - name: "API specifications complete"
+            description: "Detailed API contracts and schemas"
+            weight: 1.0
+          - name: "Database schema detailed"
+            description: "Complete data model with relationships"
+            weight: 1.0
+          - name: "Performance requirements"
+            description: "Specific performance targets and benchmarks"
+            weight: 1.0
+      
+      - category: "Security & Compliance"
+        description: "Security architecture and compliance requirements"
+        weight: 20
+        criteria:
+          - name: "Security model defined"
+            description: "Authentication, authorization, and data protection"
+            weight: 1.0
+          - name: "Threat analysis included"
+            description: "Security risks and mitigation strategies"
+            weight: 1.0
+          - name: "Compliance requirements"
+            description: "Regulatory and compliance considerations"
+            weight: 1.0
+      
+      - category: "Implementation Plan"
+        description: "Development approach and timeline"
+        weight: 15
+        criteria:
+          - name: "Development phases outlined"
+            description: "Breakdown of implementation phases"
+            weight: 1.0
+          - name: "Testing strategy comprehensive"
+            description: "Unit, integration, and system testing approaches"
+            weight: 1.0
+      
+      - category: "Operations & Maintenance"
+        description: "Deployment and ongoing maintenance"
+        weight: 10
+        criteria:
+          - name: "Deployment strategy"
+            description: "How the system will be deployed and updated"
+            weight: 1.0
+          - name: "Monitoring & alerting"
+            description: "Operational monitoring and incident response"
+            weight: 1.0
+
+scoring:
+  scale: "0-10"
+  weights:
+    product_manager: 0.2
+    data_scientist: 0.3
+    engineering: 0.5
+  thresholds:
+    excellent: 8.5
+    good: 7.0
+    acceptable: 5.5
+    needs_improvement: 3.5

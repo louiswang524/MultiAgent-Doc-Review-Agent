@@ -1,0 +1,135 @@
+metadata:
+  version: "1.0"
+  description: "Basic product launch requirements - suitable for most product launches"
+  document_type: "Product Launch"
+  template_name: "Basic Product Launch"
+  difficulty: "beginner"
+  last_updated: "2024-01-01"
+
+agents:
+  - type: "product_manager"
+    name: "Product Manager Agent"
+    description: "Evaluates business strategy and product requirements"
+    requirements:
+      - category: "Market Analysis"
+        description: "Basic market understanding and opportunity assessment"
+        weight: 35
+        criteria:
+          - name: "Target market identified"
+            description: "Clear definition of who the product is for"
+            weight: 1.0
+          - name: "Market size estimated"
+            description: "Rough size of the target market"
+            weight: 1.0
+          - name: "Key competitors identified"
+            description: "Main competitive alternatives"
+            weight: 1.0
+      
+      - category: "Product Vision"
+        description: "Clear product direction and value proposition"
+        weight: 40
+        criteria:
+          - name: "Value proposition defined"
+            description: "What unique value does the product provide"
+            weight: 1.0
+          - name: "Core features listed"
+            description: "Main features that deliver the value"
+            weight: 1.0
+          - name: "Success metrics identified"
+            description: "How we'll measure success"
+            weight: 1.0
+      
+      - category: "Launch Plan"
+        description: "Basic go-to-market approach"
+        weight: 25
+        criteria:
+          - name: "Launch timeline"
+            description: "When and how the product will be released"
+            weight: 1.0
+          - name: "Marketing approach"
+            description: "How customers will learn about the product"
+            weight: 1.0
+
+  - type: "data_scientist"
+    name: "Data Scientist Agent"
+    description: "Evaluates measurement and analytics approach"
+    requirements:
+      - category: "Key Metrics"
+        description: "Essential measurements for success"
+        weight: 50
+        criteria:
+          - name: "Primary success metric"
+            description: "Main KPI that indicates product success"
+            weight: 1.0
+          - name: "User engagement metrics"
+            description: "How we'll measure user satisfaction and usage"
+            weight: 1.0
+          - name: "Business impact metrics"
+            description: "Financial or business metrics affected"
+            weight: 1.0
+      
+      - category: "Data Collection"
+        description: "How we'll gather the data we need"
+        weight: 50
+        criteria:
+          - name: "Data sources identified"
+            description: "Where the measurement data will come from"
+            weight: 1.0
+          - name: "Tracking implementation"
+            description: "How data will be collected and stored"
+            weight: 1.0
+
+  - type: "engineering"
+    name: "Engineering Agent"
+    description: "Evaluates technical feasibility and implementation"
+    requirements:
+      - category: "Technical Approach"
+        description: "Overall technical strategy"
+        weight: 40
+        criteria:
+          - name: "Architecture outlined"
+            description: "High-level technical approach described"
+            weight: 1.0
+          - name: "Technology choices explained"
+            description: "Key technology decisions made and justified"
+            weight: 1.0
+          - name: "Scalability considered"
+            description: "How the system will handle growth"
+            weight: 1.0
+      
+      - category: "Implementation Plan"
+        description: "Development and delivery plan"
+        weight: 35
+        criteria:
+          - name: "Development timeline"
+            description: "Realistic timeline for building the product"
+            weight: 1.0
+          - name: "Team requirements"
+            description: "What team members and skills are needed"
+            weight: 1.0
+          - name: "Key risks identified"
+            description: "Main technical challenges and risks"
+            weight: 1.0
+      
+      - category: "Quality & Operations"
+        description: "Testing and operational considerations"
+        weight: 25
+        criteria:
+          - name: "Testing approach"
+            description: "How the product will be tested"
+            weight: 1.0
+          - name: "Launch readiness"
+            description: "Operational requirements for going live"
+            weight: 1.0
+
+scoring:
+  scale: "0-10"
+  weights:
+    product_manager: 0.4
+    data_scientist: 0.3
+    engineering: 0.3
+  thresholds:
+    excellent: 8.0
+    good: 6.5
+    acceptable: 5.0
+    needs_improvement: 3.0

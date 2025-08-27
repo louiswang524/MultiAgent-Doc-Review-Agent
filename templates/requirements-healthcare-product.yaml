@@ -1,0 +1,209 @@
+metadata:
+  version: "1.0"
+  description: "Healthcare technology product requirements with HIPAA compliance"
+  document_type: "HealthTech Product"
+  template_name: "Healthcare Product Launch"
+  difficulty: "advanced"
+  industry: "healthcare"
+  last_updated: "2024-01-01"
+
+agents:
+  - type: "product_manager"
+    name: "Product Manager Agent"
+    description: "Evaluates healthcare product strategy and compliance"
+    requirements:
+      - category: "Healthcare Compliance"
+        description: "Medical regulations and standards compliance"
+        weight: 35
+        criteria:
+          - name: "HIPAA compliance plan"
+            description: "How Protected Health Information (PHI) is handled"
+            weight: 1.0
+          - name: "FDA requirements assessed"
+            description: "If applicable, FDA medical device regulations"
+            weight: 1.0
+          - name: "Clinical workflow integration"
+            description: "How product fits into existing healthcare workflows"
+            weight: 1.0
+      
+      - category: "Clinical Value"
+        description: "Healthcare outcomes and clinical benefits"
+        weight: 30
+        criteria:
+          - name: "Clinical outcomes defined"
+            description: "How the product improves patient care"
+            weight: 1.0
+          - name: "Evidence-based approach"
+            description: "Clinical evidence supporting product benefits"
+            weight: 1.0
+          - name: "Provider adoption strategy"
+            description: "How healthcare providers will adopt the solution"
+            weight: 1.0
+      
+      - category: "Patient Experience"
+        description: "Patient-centered design considerations"
+        weight: 20
+        criteria:
+          - name: "Patient privacy protection"
+            description: "How patient privacy is maintained and communicated"
+            weight: 1.0
+          - name: "Accessibility compliance"
+            description: "ADA compliance and accessibility features"
+            weight: 1.0
+          - name: "Health literacy support"
+            description: "Making medical information understandable"
+            weight: 1.0
+      
+      - category: "Market Strategy"
+        description: "Healthcare market positioning"
+        weight: 15
+        criteria:
+          - name: "Target healthcare segment"
+            description: "Hospitals, clinics, patients, payers, etc."
+            weight: 1.0
+          - name: "Reimbursement strategy"
+            description: "How the product will be paid for"
+            weight: 1.0
+
+  - type: "data_scientist"
+    name: "Data Scientist Agent"
+    description: "Evaluates health data analytics and research capabilities"
+    requirements:
+      - category: "Health Data Management"
+        description: "Secure handling of protected health information"
+        weight: 40
+        criteria:
+          - name: "PHI de-identification"
+            description: "Methods for removing identifying information"
+            weight: 1.0
+          - name: "Data minimization principle"
+            description: "Collecting only necessary health data"
+            weight: 1.0
+          - name: "Consent management"
+            description: "Patient consent tracking and management"
+            weight: 1.0
+          - name: "Interoperability standards"
+            description: "FHIR, HL7, and other health data standards"
+            weight: 1.0
+      
+      - category: "Clinical Analytics"
+        description: "Healthcare-specific data analysis capabilities"
+        weight: 30
+        criteria:
+          - name: "Clinical decision support"
+            description: "Analytics to support medical decision making"
+            weight: 1.0
+          - name: "Population health insights"
+            description: "Analytics for public health and epidemiology"
+            weight: 1.0
+          - name: "Clinical outcomes measurement"
+            description: "Tracking patient outcomes and quality metrics"
+            weight: 1.0
+      
+      - category: "Research & Quality"
+        description: "Supporting medical research and quality improvement"
+        weight: 20
+        criteria:
+          - name: "Clinical research support"
+            description: "Features supporting medical research"
+            weight: 1.0
+          - name: "Quality metrics tracking"
+            description: "Healthcare quality indicators and reporting"
+            weight: 1.0
+      
+      - category: "Security & Audit"
+        description: "Healthcare data security and audit requirements"
+        weight: 10
+        criteria:
+          - name: "Audit logging comprehensive"
+            description: "Complete audit trail for all PHI access"
+            weight: 1.0
+          - name: "Breach notification plan"
+            description: "Procedures for handling data breaches"
+            weight: 1.0
+
+  - type: "engineering"
+    name: "Engineering Agent"
+    description: "Evaluates technical implementation for healthcare systems"
+    requirements:
+      - category: "HIPAA Technical Safeguards"
+        description: "Technical requirements for HIPAA compliance"
+        weight: 35
+        criteria:
+          - name: "Access control implementation"
+            description: "Role-based access to PHI with minimum necessary principle"
+            weight: 1.0
+          - name: "Audit controls system"
+            description: "Comprehensive logging of all PHI access and modifications"
+            weight: 1.0
+          - name: "Data integrity measures"
+            description: "Protection against unauthorized alteration of PHI"
+            weight: 1.0
+          - name: "Transmission security"
+            description: "End-to-end encryption for PHI in transit"
+            weight: 1.0
+      
+      - category: "Healthcare Integration"
+        description: "Integration with healthcare systems and standards"
+        weight: 25
+        criteria:
+          - name: "EHR integration capability"
+            description: "Integration with Electronic Health Record systems"
+            weight: 1.0
+          - name: "HL7 FHIR compliance"
+            description: "Support for healthcare interoperability standards"
+            weight: 1.0
+          - name: "Medical device integration"
+            description: "If applicable, integration with medical devices"
+            weight: 1.0
+      
+      - category: "Security & Privacy"
+        description: "Healthcare-grade security implementation"
+        weight: 20
+        criteria:
+          - name: "Encryption at rest"
+            description: "All PHI encrypted when stored"
+            weight: 1.0
+          - name: "Multi-factor authentication"
+            description: "Strong authentication for healthcare users"
+            weight: 1.0
+          - name: "Network security"
+            description: "Secure network architecture and VPN access"
+            weight: 1.0
+      
+      - category: "Reliability & Performance"
+        description: "High availability for critical healthcare systems"
+        weight: 15
+        criteria:
+          - name: "High availability design"
+            description: "99.9%+ uptime for critical healthcare functions"
+            weight: 1.0
+          - name: "Disaster recovery plan"
+            description: "Business continuity for healthcare operations"
+            weight: 1.0
+          - name: "Performance under load"
+            description: "System performance during peak healthcare usage"
+            weight: 1.0
+      
+      - category: "Deployment & Maintenance"
+        description: "Healthcare environment deployment considerations"
+        weight: 5
+        criteria:
+          - name: "Secure deployment pipeline"
+            description: "DevSecOps practices for healthcare systems"
+            weight: 1.0
+          - name: "Patch management strategy"
+            description: "Security updates without disrupting patient care"
+            weight: 1.0
+
+scoring:
+  scale: "0-10"
+  weights:
+    product_manager: 0.3
+    data_scientist: 0.35
+    engineering: 0.35
+  thresholds:
+    excellent: 8.5
+    good: 7.5
+    acceptable: 6.5
+    needs_improvement: 5.0

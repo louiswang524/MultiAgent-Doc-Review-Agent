@@ -1,0 +1,157 @@
+metadata:
+  version: "1.0"
+  description: "Feature release requirements for agile development teams"
+  document_type: "Feature Release"
+  template_name: "Agile Feature Release"
+  difficulty: "intermediate"
+  last_updated: "2024-01-01"
+
+agents:
+  - type: "product_manager"
+    name: "Product Manager Agent"
+    description: "Evaluates feature strategy and user impact"
+    requirements:
+      - category: "User Value"
+        description: "Impact on users and business metrics"
+        weight: 40
+        criteria:
+          - name: "User problem defined"
+            description: "Clear statement of the problem this feature solves"
+            weight: 1.0
+          - name: "Success criteria specified"
+            description: "Measurable outcomes that define success"
+            weight: 1.0
+          - name: "User acceptance criteria"
+            description: "Clear definition of what constitutes feature completion"
+            weight: 1.0
+      
+      - category: "Feature Scope"
+        description: "What's included and what's not"
+        weight: 35
+        criteria:
+          - name: "Feature requirements detailed"
+            description: "Functional requirements clearly documented"
+            weight: 1.0
+          - name: "Out-of-scope items listed"
+            description: "Clear boundaries on what won't be included"
+            weight: 1.0
+          - name: "Dependencies identified"
+            description: "Other features or systems this depends on"
+            weight: 1.0
+      
+      - category: "Release Strategy"
+        description: "How the feature will be rolled out"
+        weight: 25
+        criteria:
+          - name: "Rollout plan"
+            description: "Phased release strategy if applicable"
+            weight: 1.0
+          - name: "Rollback strategy"
+            description: "Plan for reverting if issues arise"
+            weight: 1.0
+
+  - type: "data_scientist"
+    name: "Data Scientist Agent"
+    description: "Evaluates measurement and experimentation"
+    requirements:
+      - category: "Measurement Plan"
+        description: "How success will be measured"
+        weight: 45
+        criteria:
+          - name: "Feature metrics defined"
+            description: "Specific metrics for this feature"
+            weight: 1.0
+          - name: "Baseline established"
+            description: "Current state measurements before feature launch"
+            weight: 1.0
+          - name: "Target improvements"
+            description: "Expected impact on key metrics"
+            weight: 1.0
+      
+      - category: "Experimentation"
+        description: "A/B testing or gradual rollout approach"
+        weight: 35
+        criteria:
+          - name: "Test design"
+            description: "How the feature will be tested with users"
+            weight: 1.0
+          - name: "Sample size planning"
+            description: "How many users needed for meaningful results"
+            weight: 1.0
+      
+      - category: "Analytics Implementation"
+        description: "Technical measurement setup"
+        weight: 20
+        criteria:
+          - name: "Tracking events defined"
+            description: "What user actions will be tracked"
+            weight: 1.0
+          - name: "Dashboard requirements"
+            description: "How results will be monitored"
+            weight: 1.0
+
+  - type: "engineering"
+    name: "Engineering Agent"
+    description: "Evaluates technical implementation and delivery"
+    requirements:
+      - category: "Technical Design"
+        description: "Implementation approach and architecture"
+        weight: 35
+        criteria:
+          - name: "Technical specification"
+            description: "How the feature will be built"
+            weight: 1.0
+          - name: "API changes documented"
+            description: "Any changes to interfaces or data models"
+            weight: 1.0
+          - name: "Performance impact assessed"
+            description: "Effect on system performance"
+            weight: 1.0
+      
+      - category: "Development Plan"
+        description: "Sprint planning and resource allocation"
+        weight: 30
+        criteria:
+          - name: "Story breakdown"
+            description: "Feature broken into implementable user stories"
+            weight: 1.0
+          - name: "Sprint allocation"
+            description: "How work fits into upcoming sprints"
+            weight: 1.0
+          - name: "Resource requirements"
+            description: "Team members and time needed"
+            weight: 1.0
+      
+      - category: "Quality Assurance"
+        description: "Testing and deployment strategy"
+        weight: 25
+        criteria:
+          - name: "Testing strategy"
+            description: "Unit, integration, and user testing plans"
+            weight: 1.0
+          - name: "Deployment plan"
+            description: "How the feature will be deployed safely"
+            weight: 1.0
+      
+      - category: "Risk Management"
+        description: "Technical risks and mitigation"
+        weight: 10
+        criteria:
+          - name: "Technical risks identified"
+            description: "Potential issues and mitigation strategies"
+            weight: 1.0
+          - name: "Feature flags planned"
+            description: "Ability to disable feature if needed"
+            weight: 1.0
+
+scoring:
+  scale: "0-10"
+  weights:
+    product_manager: 0.35
+    data_scientist: 0.25
+    engineering: 0.4
+  thresholds:
+    excellent: 8.0
+    good: 6.5
+    acceptable: 5.0
+    needs_improvement: 3.0

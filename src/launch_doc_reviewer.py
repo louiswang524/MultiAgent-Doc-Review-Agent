@@ -39,7 +39,8 @@ class LaunchDocReviewer:
         llm_provider: Optional[str] = None,
         llm_model: Optional[str] = None,
         base_url: Optional[str] = None,
-        google_credentials_path: Optional[str] = None
+        google_credentials_path: Optional[str] = None,
+        oauth_port: int = 8080
     ):
         """
         Initialize the launch document reviewer.
@@ -47,8 +48,9 @@ class LaunchDocReviewer:
         Args:
             llm_provider: LLM provider ('openai', 'anthropic', 'ollama', 'local')
             llm_model: Specific model to use
-            base_url: Base URL for local LLM services
-            google_credentials_path: Path to Google API credentials
+            base_url: Base URL for local LLM services (ollama/local)
+            google_credentials_path: Path to Google OAuth credentials JSON
+            oauth_port: Port for Google OAuth redirect (default: 8080)
         """
         self.logger = logging.getLogger(__name__)
         
@@ -62,7 +64,7 @@ class LaunchDocReviewer:
         
         # Initialize Google Docs client
         try:
-            self.docs_client = GoogleDocsClient(google_credentials_path)
+            self.docs_client = GoogleDocsClient(google_credentials_path, oauth_port)
             self.logger.info("Initialized Google Docs client")
         except Exception as e:
             self.logger.error(f"Failed to initialize Google Docs client: {e}")

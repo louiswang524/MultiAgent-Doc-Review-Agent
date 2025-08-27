@@ -55,8 +55,9 @@ def cli(verbose):
 @click.option('--llm-model', help='Specific LLM model to use')
 @click.option('--base-url', help='Base URL for local LLM services (ollama/local)')
 @click.option('--google-credentials', help='Path to Google API credentials')
+@click.option('--oauth-port', type=int, default=8080, help='Port for Google OAuth redirect (default: 8080)')
 @click.option('--format', 'output_format', type=click.Choice(['text', 'json']), default='text', help='Output format')
-def review(doc, requirements, output, llm_provider, llm_model, base_url, google_credentials, output_format):
+def review(doc, requirements, output, llm_provider, llm_model, base_url, google_credentials, oauth_port, output_format):
     """Review a launch document from Google Docs."""
     
     async def run_review():
@@ -96,7 +97,8 @@ def review(doc, requirements, output, llm_provider, llm_model, base_url, google_
                         llm_provider=llm_provider,
                         llm_model=llm_model,
                         base_url=base_url,
-                        google_credentials_path=google_credentials
+                        google_credentials_path=google_credentials,
+                        oauth_port=oauth_port
                     )
                     progress.update(task, description="✅ Reviewer initialized")
                 except Exception as e:
@@ -368,9 +370,25 @@ def check_setup():
     google_creds = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
     if google_creds and Path(google_creds).exists():
         console.print("[green]✅ Google credentials configured[/green]")
+        
+        # Test Google OAuth setup
+        try:
+            from .utils.google_docs_client import GoogleDocsClient
+            console.print("🔍 Testing Google OAuth configuration...")
+            
+            # Try to create client (this will validate credentials format)
+            test_client = GoogleDocsClient(google_creds)
+            console.print("[green]✅ Google OAuth client initialized successfully[/green]")
+            console.print("📋 OAuth redirect URL: http://localhost:8080")
+            console.print("💡 If you get redirect_url_mismatch, add http://localhost:8080 to Google Cloud Console")
+            
+        except Exception as e:
+            console.print(f"[red]❌ Google OAuth setup issue: {e}[/red]")
+            console.print("📖 See GOOGLE_OAUTH_SETUP.md for detailed setup instructions")
     else:
         console.print("[yellow]⚠️ Google credentials not found[/yellow]")
-        console.print("Set GOOGLE_APPLICATION_CREDENTIALS environment variable")
+        console.print("Set GOOGLE_APPLICATION_CREDENTIALS environment variable or use --google-credentials flag")
+        console.print("📖 See GOOGLE_OAUTH_SETUP.md for setup instructions")
     
     # Check dependencies
     try:

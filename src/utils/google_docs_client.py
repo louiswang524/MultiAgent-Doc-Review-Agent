@@ -25,12 +25,13 @@ class GoogleDocsClient:
     # Required scopes for reading Google Docs
     SCOPES = ['https://www.googleapis.com/auth/documents.readonly']
     
-    def __init__(self, credentials_path: Optional[str] = None):
+    def __init__(self, credentials_path: Optional[str] = None, oauth_port: int = 8080):
         """
         Initialize Google Docs client.
         
         Args:
             credentials_path: Path to Google API credentials JSON file
+            oauth_port: Port for OAuth redirect (must match Google Cloud Console config)
         """
         if not GOOGLE_AVAILABLE:
             raise ImportError(
@@ -39,6 +40,7 @@ class GoogleDocsClient:
             )
         
         self.credentials_path = credentials_path or os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+        self.oauth_port = oauth_port
         self.logger = logging.getLogger(__name__)
         self.service = None
         self._authenticate()
@@ -70,7 +72,22 @@ class GoogleDocsClient:
                     flow = InstalledAppFlow.from_client_secrets_file(
                         self.credentials_path, self.SCOPES
                     )
-                    creds = flow.run_local_server(port=0)
+                    # Use fixed port to match OAuth configuration
+                    try:
+                        creds = flow.run_local_server(port=self.oauth_port, open_browser=True)
+                    except Exception as oauth_error:
+                        self.logger.error(f"OAuth flow failed on port {self.oauth_port}: {oauth_error}")
+                        # Provide detailed error message with solution
+                        error_msg = (
+                            f"OAuth authentication failed. This is likely a redirect URL mismatch.\n\n"
+                            f"To fix this:\n"
+                            f"1. Go to Google Cloud Console: https://console.cloud.google.com/apis/credentials\n"
+                            f"2. Find your OAuth 2.0 Client ID\n"
+                            f"3. Add this redirect URI: http://localhost:{self.oauth_port}\n"
+                            f"4. Make sure the port {self.oauth_port} is not in use\n\n"
+                            f"Original error: {oauth_error}"
+                        )
+                        raise RuntimeError(error_msg)
                 
                 # Save credentials for next run
                 with open(token_path, 'w') as token:
